@@ -1,0 +1,120 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: stock_db  # Adjust if your database is different
+    schema: raw_data
+    tables:
+      - name: stock_prices
+        description: "Table containing stock price data"
+        columns:
+          - name: date
+            description: "Date of the stock data"
+          - name: open
+            description: "Opening price of the stock"
+          - name: high
+            description: "Highest price of the stock"
+          - name: low
+            description: "Lowest price of the stock"
+          - name: close
+            description: "Closing price of the stock"
+          - name: volume
+            description: "Volume of stocks traded"
+          - name: symbol
+            description: "Stock symbol"
+
+models:
+  - name: DMA
+    description: "A model that calculates the 7-day moving average of stock prices"
+    columns:
+      - name: date
+        description: "Date of the stock data"
+        tests:
+          - not_null
+      - name: symbol
+        description: "Stock symbol"
+        tests:
+          - not_null
+      - name: close
+        description: "Closing price of the stock"
+      - name: moving_average_7d
+        description: "7-day moving average of the closing stock prices"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: ['date', 'symbol']
+
+  - name: RSI
+    description: "A model that calculates the Relative Strength Index (RSI) for stock prices"
+    columns:
+      - name: date
+        description: "Date of the stock data"
+        tests:
+          - not_null
+      - name: symbol
+        description: "Stock symbol"
+        tests:
+          - not_null
+      - name: close
+        description: "Closing price of the stock"
+      - name: rsi
+        description: "Relative Strength Index (RSI) of the stock prices"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: ['date', 'symbol']
+
+  - name: SOC
+    description: "A model that calculates the Stochastic Oscillator for stock prices"
+    columns:
+      - name: date
+        description: "Date of the stock data"
+        tests:
+          - not_null
+      - name: symbol
+        description: "Stock symbol"
+        tests:
+          - not_null
+      - name: close
+        description: "Closing price of the stock"
+      - name: stochastic_oscillator
+        description: "Stochastic Oscillator value for the stock prices"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: ['date', 'symbol']
+
+  - name: ATR
+    description: "A model that calculates the Average True Range (ATR) for stock prices"
+    columns:
+      - name: date
+        description: "Date of the stock data"
+        tests:
+          - not_null
+      - name: symbol
+        description: "Stock symbol"
+        tests:
+          - not_null
+      - name: close
+        description: "Closing price of the stock"
+      - name: atr
+        description: "Average True Range (ATR) of the stock prices"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: ['date', 'symbol']
+
+  - name: ADX
+    description: "A model that calculates the Average Directional Index (ADX) for stock prices"
+    columns:
+      - name: date
+        description: "Date of the stock data"
+        tests:
+          - not_null
+      - name: symbol
+        description: "Stock symbol"
+        tests:
+          - not_null
+      - name: close
+        description: "Closing price of the stock"
+      - name: adx
+        description: "Average Directional Index (ADX) of the stock prices"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: ['date', 'symbol']
