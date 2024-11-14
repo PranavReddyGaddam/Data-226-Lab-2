@@ -201,6 +201,29 @@ def predict_next_7_days(df):
     return forecast_df
 
 
+DBT_ACCOUNT = Variable.get("DBT_ACCOUNT")
+DBT_DATABASE = Variable.get("DBT_DATABASE")
+DBT_PASSWORD = Variable.get("DBT_PASSWORD")
+DBT_ROLE = Variable.get("DBT_ROLE")
+DBT_TYPE = Variable.get("DBT_TYPE")
+DBT_USER = Variable.get("DBT_USER")
+DBT_WAREHOUSE = Variable.get("DBT_WAREHOUSE")
+
+# Create a configuration dictionary
+env = {
+    'account': DBT_ACCOUNT,
+    'database': DBT_DATABASE,
+    'password': DBT_PASSWORD,
+    'role': DBT_ROLE,
+    'threads': 1,
+    'schema': 'analytics',
+    'type': DBT_TYPE,
+    'user': DBT_USER,
+    'warehouse': DBT_WAREHOUSE,
+    'target': 'dev'
+}
+
+
 # DAG definition
 with DAG(
     dag_id='Stock_Forecast',
@@ -219,15 +242,18 @@ with DAG(
 
     run_all_dbt_models = BashOperator(
     task_id='run_all_dbt_models',
-    bash_command='cd /opt/airflow/stock_prices && dbt run')
+    bash_command='cd /opt/airflow/stock_prices && dbt run'
+    env = env)
 
     run_dbt_tests = BashOperator(
     task_id='run_dbt_tests',
-    bash_command='cd /opt/airflow/stock_prices && dbt test')
+    bash_command='cd /opt/airflow/stock_prices && dbt test',
+    env = env)
     
     run_dbt_snapshots = BashOperator(
     task_id='run_dbt_snapshots',
-    bash_command='cd /opt/airflow/stock_prices && dbt snapshot')
+    bash_command='cd /opt/airflow/stock_prices && dbt snapshot',
+    env = env)
 
     load_90_days_data >> forecast_data >> load_forecast
     load_forecast >> run_all_dbt_models
